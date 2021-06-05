@@ -1,0 +1,32 @@
+{
+    "name": "fhermann/listener-autoconfigurator-bundle",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Florian Hermann",
+            "email": "florian.hermann94@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4||^8.0",
+        "symfony/config": "^4.4||^5.0",
+        "symfony/dependency-injection": "^4.4||^5.0",
+        "symfony/http-kernel": "^4.4.13||^5.0",
+        "symfony/event-dispatcher": "^4.4||^5.0"
+    },
+    "require-dev": {
+        "symfony/phpunit-bridge": "^4.4||^5.0",
+        "vimeo/psalm": "^4.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "FHermann\\ListenerAutoconfiguratorBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FHermann\\ListenerAutoconfiguratorBundle\\Tests\\": "tests/"
+        }
+    }
+}
