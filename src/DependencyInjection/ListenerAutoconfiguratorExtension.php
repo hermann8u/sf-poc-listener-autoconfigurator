@@ -10,10 +10,12 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 
 final class ListenerAutoconfiguratorExtension extends Extension
 {
+    public const BUNDLE_LISTENER_TAG = 'listener_autoconfigurator.event_listener';
+
     public function load(array $configs, ContainerBuilder $container): void
     {
         $container->registerForAutoconfiguration(EventListenerInterface::class)
-            ->addTag('listener_autoconfigurator.event_listener')
+            ->addTag(self::BUNDLE_LISTENER_TAG)
         ;
     }
 }

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace FHermann\ListenerAutoconfiguratorBundle\DependencyInjection\Compiler;
 
+use FHermann\ListenerAutoconfiguratorBundle\DependencyInjection\ListenerAutoconfiguratorExtension;
 use FHermann\ListenerAutoconfiguratorBundle\PriorizableEventListenerInterface;
 use ReflectionClass;
+use ReflectionNamedType;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -15,17 +17,18 @@ use function in_array;
 
 final class RegisterListenerPass implements CompilerPassInterface
 {
+    private const SYMFONY_EVENT_LISTENER_TAG = 'kernel.event_listener';
     private const INVOKE_METHOD = '__invoke';
 
     public function process(ContainerBuilder $container): void
     {
         /** @var string[] $serviceIds */
-        $serviceIds = array_keys($container->findTaggedServiceIds('listener_autoconfigurator.event_listener'));
+        $serviceIds = array_keys($container->findTaggedServiceIds(ListenerAutoconfiguratorExtension::BUNDLE_LISTENER_TAG));
 
         foreach ($serviceIds as $serviceId) {
             $definition = $container->getDefinition($serviceId);
 
-            $definition->addTag('kernel.event_listener', $this->getTagAttributes($definition));
+            $definition->addTag(self::SYMFONY_EVENT_LISTENER_TAG, $this->getTagAttributes($definition));
         }
     }
 
@@ -55,12 +58,16 @@ final class RegisterListenerPass implements CompilerPassInterface
             throw new \Exception('No parameter');
         }
 
-        $parameterClass = $reflectionParameter->getClass();
-        if ($parameterClass === null) {
-            throw new \Exception('Yo');
+        $reflectionType = $reflectionParameter->getType();
+        if ($reflectionType === null) {
+            throw new \Exception('No typehint for listener parameter');
         }
 
-        return $parameterClass->getName();
+        if ($reflectionType instanceof ReflectionNamedType === false) {
+            throw new \Exception('Union type not supported');
+        }
+
+        return $reflectionType->getName();
     }
 
     /**
