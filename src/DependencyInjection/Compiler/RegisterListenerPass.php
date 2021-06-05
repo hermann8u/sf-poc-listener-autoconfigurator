@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace FHermann\ListenerAutoconfiguratorBundle\DependencyInjection\Compiler;
 
-use FHermann\ListenerAutoconfiguratorBundle\PriorizableEventListener;
+use FHermann\ListenerAutoconfiguratorBundle\PriorizableEventListenerInterface;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -70,11 +70,11 @@ final class RegisterListenerPass implements CompilerPassInterface
      */
     private function getPriority(string $listenerFQCN): int
     {
-        if (in_array(PriorizableEventListener::class, class_implements($listenerFQCN)) === false) {
+        if (in_array(PriorizableEventListenerInterface::class, class_implements($listenerFQCN)) === false) {
             return 0;
         }
 
-        /** @var class-string<PriorizableEventListener> $listenerFQCN */
+        /** @var class-string<PriorizableEventListenerInterface> $listenerFQCN */
         return $listenerFQCN::getPriority();
     }
 }
